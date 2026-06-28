@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShadowAI — A Concise Intelligence</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;700;900&family=Inter:wght@400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #000000;
+      --red:    #e8192c;
+      --white:  #ffffff;
+      --muted:  #888888;
+      --border: #222222;
+      --font:   'Inter', sans-serif;
+      --display:'Barlow', sans-serif;
+    }
+
+    body { background: var(--black); color: var(--white); font-family: var(--font); height: 100dvh; overflow: hidden; }
+
+    /* ══ LANDING ══ */
+    #landing { display: grid; grid-template-columns: 1fr 1fr; height: 100dvh; }
+
+    .left {
+      padding: 40px 48px;
+      display: flex; flex-direction: column; justify-content: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .eyebrow {
+      position: absolute; top: 28px; left: 48px;
+      font-size: 11px; letter-spacing: .2em; color: var(--muted); font-weight: 500;
+    }
+    .hero-text {
+      font-family: var(--display); font-weight: 900;
+      font-size: clamp(64px, 7vw, 100px);
+      line-height: .95; text-transform: uppercase; margin-bottom: 32px;
+    }
+    .hero-text .red { color: var(--red); }
+    .underline-red { display: inline-block; border-bottom: 4px solid var(--red); padding-bottom: 2px; }
+    .tagline { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 380px; }
+
+    .right { padding: 40px 64px; display: flex; flex-direction: column; justify-content: center; }
+    .brand { margin-bottom: 48px; }
+    .brand-name { font-family: var(--display); font-weight: 900; font-size: 26px; letter-spacing: -.02em; text-transform: uppercase; }
+    .brand-name span { color: var(--red); }
+    .brand-sub { font-size: 11px; letter-spacing: .2em; color: var(--muted); margin-top: 4px; text-transform: uppercase; }
+
+    .step-label { font-size: 11px; letter-spacing: .15em; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; }
+    .step-title { font-family: var(--display); font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 32px; }
+
+    .google-btn {
+      width: 100%; background: transparent; border: 1px solid var(--border);
+      color: var(--white); font-family: var(--font); font-size: 13px; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase; padding: 16px 24px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
+      transition: border-color .2s, background .2s; margin-bottom: 12px;
+    }
+    .google-btn:hover { border-color: var(--white); background: rgba(255,255,255,.04); }
+    .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .coming-soon { font-size: 12px; color: var(--muted); margin-bottom: 40px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
+    .legal { font-size: 11px; color: #555; line-height: 1.6; }
+
+    /* ══ CHAT ══ */
+    #chatPage { display: none; flex-direction: column; height: 100dvh; }
+
+    .chat-header {
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .chat-brand { font-family: var(--display); font-weight: 900; font-size: 18px; text-transform: uppercase; }
+    .chat-brand span { color: var(--red); }
+    .user-name { font-size: 13px; color: var(--muted); }
+    .live-pill {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase; color: #4ade80;
+      border: 1px solid rgba(74,222,128,.3); background: rgba(74,222,128,.08);
+      padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px;
+    }
+    .live-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    #messages {
+      flex: 1; overflow-y: auto; padding: 32px 24px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    #messages::-webkit-scrollbar { width: 3px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .msg { display: flex; gap: 14px; max-width: 760px; width: 100%; margin: 0 auto; }
+    .msg.user { flex-direction: row-reverse; }
+    .av {
+      width: 30px; height: 30px; border-radius: 50%;
+      font-size: 13px; font-weight: 700; font-family: var(--display);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .msg.ai   .av { background: var(--red); color: var(--white); }
+    .msg.user .av { background: var(--border); color: var(--white); }
+    .bubble { font-size: 14px; line-height: 1.7; max-width: calc(100% - 48px); }
+    .msg.user .bubble { background: #111; border: 1px solid var(--border); padding: 10px 16px; color: #ccc; }
+    .bubble strong { color: var(--white); }
+    .bubble a { color: var(--red); }
+
+    .sources-row { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .src {
+      font-size: 10px; color: var(--muted); border: 1px solid var(--border);
+      padding: 3px 8px; border-radius: 3px; text-decoration: none; transition: border-color .2s;
+    }
+    .src:hover { border-color: var(--red); color: var(--white); }
+
+    .typing { display: flex; gap: 5px; align-items: center; padding: 6px 0; }
+    .typing span { width:6px; height:6px; border-radius:50%; background:var(--red); animation: jump .8s infinite; }
+    .typing span:nth-child(2) { animation-delay:.15s; }
+    .typing span:nth-child(3) { animation-delay:.3s; }
+    @keyframes jump { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-7px)} }
+
+    #inputArea { padding: 16px 24px; border-top: 1px solid var(--border); }
+    .input-row { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; align-items: flex-end; }
+    #userInput {
+      flex: 1; background: #0a0a0a; border: 1px solid var(--border);
+      color: var(--white); font-family: var(--font); font-size: 14px;
+      padding: 13px 16px; resize: none; max-height: 140px;
+      outline: none; transition: border-color .2s; line-height: 1.5;
+    }
+    #userInput:focus { border-color: var(--red); }
+    #userInput::placeholder { color: #444; }
+    #sendBtn {
+      background: var(--red); border: none; color: var(--white);
+      font-family: var(--display); font-weight: 700; font-size: 12px;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 13px 22px; cursor: pointer; transition: opacity .2s; height: 48px;
+    }
+    #sendBtn:hover:not(:disabled) { opacity: .85; }
+    #sendBtn:disabled { opacity: .4; cursor: not-allowed; }
+    .hint { text-align:center; font-size:11px; color:#333; margin-top:8px; letter-spacing:.05em; }
+
+    .error { color: var(--red); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<div id="landing">
+  <div class="left">
+    <span class="eyebrow">// 01 / INTELLIGENCE SUITE</span>
+    <div class="hero-text">
+      LESS<br>
+      <span class="red">NOISE.</span><br>
+      MORE<br>
+      <span class="underline-red">SIGNAL.</span>
+    </div>
+    <p class="tagline">ShadowAI is a concise intelligence — built like a great teacher. No filler, no preamble, just the answer.</p>
+  </div>
+
+  <div class="right">
+    <div class="brand">
+      <div class="brand-name">SHADOW<span>AI</span></div>
+      <div class="brand-sub">A Concise Intelligence</div>
+    </div>
+    <div class="step-label">Step 01</div>
+    <div class="step-title">Enter the shadow.</div>
+    <p class="step-desc">Sign in to start a conversation with the sharpest AI you'll ever meet.</p>
+
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      CONTINUE WITH GOOGLE
+    </button>
+    <p class="coming-soon">Microsoft sign-in arriving soon.</p>
+    <hr class="divider"/>
+    <p class="legal">By signing in you agree that ShadowAI is a tool for learning, not a substitute for verified expertise. Your conversations stay private to your account.</p>
+  </div>
+</div>
+
+<!-- ══ CHAT ══ -->
+<div id="chatPage">
+  <div class="chat-header">
+    <div class="chat-brand">SHADOW<span>AI</span></div>
+    <div class="user-name" id="userName"></div>
+    <div class="live-pill"><span class="live-dot"></span> Live Search</div>
+  </div>
+  <div id="messages"></div>
+  <div id="inputArea">
+    <div class="input-row">
+      <textarea id="userInput" rows="1" placeholder="Ask anything — I'll search the web for you…"></textarea>
+      <button id="sendBtn" onclick="sendMessage()">Send →</button>
+    </div>
+    <p class="hint">SHADOWAI · GEMINI + TAVILY LIVE SEARCH</p>
+  </div>
+</div>
+
+<script>
+  // ════════════════════════════════════════
+  //   PASTE YOUR KEYS HERE
+  // ════════════════════════════════════════
+  const GEMINI_KEY = "PLACEHOLDER";
+  const TAVILY_KEY = "PLACEHOLDER";
+  // ════════════════════════════════════════
+
+  // ── Google Sign In ──
+  function signInWithGoogle() {
+    showChat("Zaeem");
+  }
+
+  function showChat(name) {
+    document.getElementById("landing").style.display  = "none";
+    document.getElementById("chatPage").style.display = "flex";
+    document.getElementById("userName").textContent   = "— " + name;
+    addMsg("ai", "Signal acquired. What do you need to know?", []);
+    document.getElementById("userInput").focus();
+  }
+
+  // ── Chat logic ──
+  let history = [];
+  let busy    = false;
+  const inputEl = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const msgsEl  = document.getElementById("messages");
+
+  inputEl.addEventListener("input", () => {
+    inputEl.style.height = "auto";
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+  });
+  inputEl.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  function addMsg(role, text, sources) {
+    const div = document.createElement("div");
+    div.className = `msg ${role}`;
+    let html = `<div class="av">${role === "ai" ? "S" : "U"}</div><div class="bubble">${mdToHtml(text)}`;
+    if (sources && sources.length) {
+      html += `<div class="sources-row">`;
+      sources.forEach(s => { html += `<a class="src" href="${s.url}" target="_blank">${s.title || s.url}</a>`; });
+      html += `</div>`;
+    }
+    html += `</div>`;
+    div.innerHTML = html;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  function addTyping() {
+    const d = document.createElement("div");
+    d.className = "msg ai"; d.id = "typing";
+    d.innerHTML = `<div class="av">S</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    msgsEl.appendChild(d);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+  function removeTyping() { document.getElementById("typing")?.remove(); }
+
+  function mdToHtml(t) {
+    return t
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+      .replace(/\*(.+?)\*/g,"<em>$1</em>")
+      .replace(/`([^`]+)`/g,"<code>$1</code>")
+      .replace(/\n/g,"<br>");
+  }
+
+  async function sendMessage() {
+    if (busy) return;
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    if (GEMINI_KEY === "PASTE_YOUR_GEMINI_KEY_HERE" || TAVILY_KEY === "PASTE_YOUR_TAVILY_KEY_HERE") {
+      addMsg("ai", "⚠️ Please paste your Gemini and Tavily API keys into the index.html file first!", []);
+      return;
+    }
+
+    busy = true;
+    sendBtn.disabled = true;
+    inputEl.value = "";
+    inputEl.style.height = "auto";
+
+    addMsg("user", text, []);
+    addTyping();
+
+    try {
+      // Step 1 — Search web with Tavily
+      let sources = [];
+      let searchContext = "";
+      try {
+        const tavRes = await fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: TAVILY_KEY, query: text, max_results: 5 })
+        });
+        const tavData = await tavRes.json();
+        sources = (tavData.results || []).map(r => ({ title: r.title, url: r.url }));
+        searchContext = (tavData.results || []).map(r => `Source: ${r.url}\n${r.content}`).join("\n\n");
+      } catch(e) { searchContext = ""; }
+
+      // Step 2 — Ask Gemini
+      history.push({ role: "user", parts: [{ text: `Web search context:\n${searchContext}\n\nUser question: ${text}` }] });
+
+      const gemRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: "You are ShadowAI — a concise intelligence. Built like a great teacher. No filler, no preamble, just the answer. Be sharp, direct, and accurate." }] },
+            contents: history
+          })
+        }
+      );
+      const gemData = await gemRes.json();
+      removeTyping();
+
+      if (gemData.error) {
+        addMsg("ai", `<span class="error">Gemini error: ${gemData.error.message}</span>`, []);
+      } else {
+        const reply = gemData.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+        addMsg("ai", reply, sources);
+        history.push({ role: "model", parts: [{ text: reply }] });
+      }
+
+    } catch(err) {
+      removeTyping();
+      addMsg("ai", `<span class="error">Error: ${err.message}</span>`, []);
+    }
+
+    busy = false;
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+</script>
+
+</body>
+</html>
